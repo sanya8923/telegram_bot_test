@@ -15,9 +15,9 @@ bot = Bot(token=config.bot_token.get_secret_value(), parse_mode='HTML')
 dp = Dispatcher()
 
 # старт бота
-@dp.message(Command('start'))
-async def cmd_start(message: types.Message):
-    await message.answer('Hello')
+# @dp.message(Command('start'))
+# async def cmd_start(message: types.Message):
+#     await message.answer('Hello')
 
 
 # текстовой ответ на команду
@@ -187,8 +187,33 @@ async def cmd_hidden_link(message: types.Message):
         )
 
 
+# обычная клавиатура
+# @dp.message(Command('start'))
+# async def cmd_start(message: types.Message):
+#     kb = [
+#             [types.KeyboardButton(text='Button 1')],
+#             [types.KeyboardButton(text='Button 2')]
+#           ]
+#     keyboard = types.ReplyKeyboardMarkup(keyboard=kb)
+#     await message.answer('Choice button', reply_markup=keyboard)
+
+
+# обычные кнопки форматированные
+@dp.message(Command('start'))
+async def cmd_start_beautiful(message: types.Message):
+    kb = [
+            [
+                types.KeyboardButton(text='Button 1'),  # кнопки в одном элементе списка
+                types.KeyboardButton(text='Button 2')  # ставят их в один ряд
+            ]
+          ]
+    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True, input_field_placeholder='Tra-ta-ta')
+    # resize_keyboard уменьшает клавиатуру
+    # input_field_placeholder в окошке куда пишем прописывает Tra-ta-ta
+    await message.answer('Choice button', reply_markup=keyboard)
+
+
 async def main():
-    dp.message.register(cmd_test2, Command('test2'))
     # dp.message.register(cmd_name2, Command('name2'))
 
     # dp.message.register(add_to_list)
