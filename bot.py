@@ -3,6 +3,7 @@ import logging
 
 from aiogram import Bot, Dispatcher, types, html, F
 from aiogram.filters.command import Command, CommandObject
+from aiogram.types import FSInputFile, BufferedInputFile, URLInputFile
 from aiogram.enums.dice_emoji import DiceEmoji
 from config_reader import config
 from datetime import datetime
@@ -83,27 +84,42 @@ async def cmd_name(message: types.Message, command: CommandObject):
 #         await message.answer('Add your name after command /name')
 
 
-@dp.message(F.text)
-async def cmd_data(message: types.Message):
-    data = {
-        'url': '<N/A>',
-        'email': '<N/A>',
-        'code': '<N/A>'
-    }
-    entities = message.entities or []
-    for item in entities:
-        if item.type in data.keys():
-            data[item.type] = item.extract_from(message.text)
-    await message.reply('Result search:\n'
-                        f'URL: {html.quote(data["url"])}\n'
-                        f'Email: {html.quote(data["email"])}\n'
-                        f'Password: {html.quote(data["code"])}'
-                        )
+# @dp.message(F.text)
+# async def cmd_data(message: types.Message):
+#     data = {
+#         'url': '<N/A>',
+#         'email': '<N/A>',
+#         'code': '<N/A>'
+#     }
+#     entities = message.entities or []
+#     for item in entities:
+#         if item.type in data.keys():
+#             data[item.type] = item.extract_from(message.text)
+#     await message.reply('Result search:\n'
+#                         f'URL: {html.quote(data["url"])}\n'
+#                         f'Email: {html.quote(data["email"])}\n'
+#                         f'Password: {html.quote(data["code"])}'
+#                         )
 
 
 @dp.message(F.animation)
 async def cmd_animation(message: types.Message):
     await message.reply_animation(message.animation.file_id)
+
+
+@dp.message(Command('images'))
+async def cmd_upload_photo_buffer(message: types.Message):
+    file_ids = []
+    with open('pic/buffer_emulation.jpg', 'rb') as image_from_buffer:
+        result = await message.answer_photo(
+            BufferedInputFile(image_from_buffer.read(),
+                              filename='image from buffer.jpg'
+                              ),
+            caption='Image_from_buffer'
+        )
+        file_ids.append(result.photo[-1].file_id)
+
+
 
 
 async def main():
