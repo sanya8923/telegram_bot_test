@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher, types, html, F
 from aiogram.filters.command import Command, CommandObject
 from aiogram.types import FSInputFile, BufferedInputFile, URLInputFile
 from aiogram.enums.dice_emoji import DiceEmoji
+from aiogram.utils.markdown import hide_link
 from config_reader import config
 from datetime import datetime
 import os
@@ -136,8 +137,8 @@ async def cmd_upload_photo_file(message: types.Message):
 @dp.message(Command('image_url'))
 async def cmd_upload_photo_url(message: types.Message):
     image_from_url = URLInputFile('https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcT18dksjE01o4uNsN-SrwZSP-Ye2rXFP8hhBkjfj_-n1guajQoxP0zer6iNHLTrx1Bd')
-    result = await message.reply_photo(image_from_url,
-                                       caption='image_from_url')
+    result = await message.answer_photo(image_from_url,
+                                        caption='image_from_url')
     file_ids.append(result.photo[-1].file_id)
     print(file_ids)
 
@@ -170,6 +171,14 @@ async def download_sticker(message: types.Message, bot: Bot):
         message.sticker,
         destination=os.path.join(temp_dir, f'{message.sticker.file_id}.webp')
     )
+
+
+@dp.message(Command('hidden_link'))
+async def cmd_hidden_link(message: types.Message):
+    await message.answer(
+        f'{hide_link("https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcT18dksjE01o4uNsN-SrwZSP-Ye2rXFP8hhBkjfj_-n1guajQoxP0zer6iNHLTrx1Bd")}'
+        f'Something text'
+        )
 
 
 async def main():
