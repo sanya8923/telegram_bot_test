@@ -14,26 +14,24 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.bot_token.get_secret_value(), parse_mode='HTML')
 dp = Dispatcher()
 
-
+# старт бота
 @dp.message(Command('start'))
 async def cmd_start(message: types.Message):
     await message.answer('Hello')
 
 
+# текстовой ответ на команду
 @dp.message(Command("test1"))
 async def cmd_test1(message: types.Message):
     await message.reply("Test 1")
 
 
-async def cmd_test2(message: types.Message):
-    await message.reply('Test2')
-
-
+# отправка стикера кости
 @dp.message(Command('dice'))
 async def cmd_dice(message: types.Message, bot: Bot):
     await bot.send_dice(5102838218, emoji=DiceEmoji.DICE)
 
-
+# создание списка, добавление элемента в список
 # mylist = [1, 2, 3]
 #
 #
@@ -43,22 +41,20 @@ async def cmd_dice(message: types.Message, bot: Bot):
 #     await message.answer('Added the number 7')
 
 
+# показ содержимого списка
 # @dp.message(Command('show_list'))
 # async def show_list(message: types.Message):
 #     await message.answer(f'Your list: {mylist}')
 
 
-@dp.message(Command('test3'))
-async def cmd_test(message: types.Message):
-    await message.reply('test3')
-
-
+# форматированный текст
 @dp.message(Command('test4'))
 async def cmd_test4(message: types.Message):
     await message.answer('Hello, <b>World</b>', parse_mode='HTML')
     # await message.answer("Hello, **World**")
 
 
+# использование CommandObject (аргумент вписывается после команды)
 @dp.message(Command('name'))
 async def cmd_name(message: types.Message, command: CommandObject):
     if command.args:
@@ -104,14 +100,17 @@ async def cmd_name(message: types.Message, command: CommandObject):
 #                         )
 
 
+# отправка анимации в ответ
 @dp.message(F.animation)
 async def cmd_animation(message: types.Message):
     await message.reply_animation(message.animation.file_id)
 
 
+# загрузка картинки и сохранение ее id
 file_ids = []
 
 
+# BufferedInputFile
 @dp.message(Command('images'))
 async def cmd_upload_photo_buffer(message: types.Message):
     with open('pic/buffer_emulation.jpg', 'rb') as image_from_buffer:
@@ -125,6 +124,7 @@ async def cmd_upload_photo_buffer(message: types.Message):
         print(file_ids)
 
 
+# FSInputFile
 @dp.message(Command('image_file'))
 async def cmd_upload_photo_file(message: types.Message):
     image_from_pc = FSInputFile('pic/image_from_pc.jpg')
@@ -134,6 +134,7 @@ async def cmd_upload_photo_file(message: types.Message):
     print(file_ids)
 
 
+# URLInputFile
 @dp.message(Command('image_url'))
 async def cmd_upload_photo_url(message: types.Message):
     image_from_url = URLInputFile('https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcT18dksjE01o4uNsN-SrwZSP-Ye2rXFP8hhBkjfj_-n1guajQoxP0zer6iNHLTrx1Bd')
@@ -143,6 +144,7 @@ async def cmd_upload_photo_url(message: types.Message):
     print(file_ids)
 
 
+# отправка картинки по id-ку
 @dp.message(Command('image_from_id'))
 async def cmd_photo_from_id(message: types.Message):
     try:
@@ -154,9 +156,11 @@ async def cmd_photo_from_id(message: types.Message):
     except Exception as e:
         print(f'Exception: {str(e)}')
 
+
+# скачивание файла
 temp_dir = os.path.join(os.path.expanduser("~"), "PycharmProjects/test_bot3/tmp")
 
-
+# скачивание картинки
 @dp.message(F.photo)
 async def download_photo(message: types.Message, bot: Bot):
     await bot.download(
@@ -165,6 +169,7 @@ async def download_photo(message: types.Message, bot: Bot):
     )
 
 
+# скачивание эмодзи
 @dp.message(F.sticker)
 async def download_sticker(message: types.Message, bot: Bot):
     await bot.download(
@@ -173,6 +178,7 @@ async def download_sticker(message: types.Message, bot: Bot):
     )
 
 
+# отправка картинки с текстом
 @dp.message(Command('hidden_link'))
 async def cmd_hidden_link(message: types.Message):
     await message.answer(
