@@ -120,6 +120,13 @@ async def cmd_upload_photo_buffer(message: types.Message):
         file_ids.append(result.photo[-1].file_id)
 
 
+@dp.message(Command('image_file'))
+async def cmd_upload_photo_file(message: types.Message):
+    file_ids = []
+    image_from_pc = FSInputFile('pic/image_from_pc.jpg')
+    result = await message.answer_photo(image_from_pc,
+                                        caption='image_from_pc')
+    file_ids.append(result.photo[-1].file_id)
 
 
 async def main():
