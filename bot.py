@@ -143,8 +143,25 @@ async def cmd_upload_photo_url(message: types.Message):
 
 @dp.message(Command('image_from_id'))
 async def cmd_photo_from_id(message: types.Message):
-    image = file_ids[0]
-    await message.reply_photo(image)
+    try:
+        image = file_ids[-1]
+        await message.reply_photo(image)
+        raise IndexError('List of id''s is empty')
+    except IndexError as e:
+        print(f'IndexError: {str(e)}')
+    except Exception as e:
+        print(f'Exception: {str(e)}')
+
+
+@dp.message(F.photo)  # TODO: разберись почему не скачивает файл
+async def download_photo(message: types.Message, bot: Bot):
+    await bot.download(
+        message.photo[-1],
+        destination=f"/tmp/{message.photo[-1].file_id}.jpg"
+    )
+
+
+# @dp.
 
 
 async def main():
