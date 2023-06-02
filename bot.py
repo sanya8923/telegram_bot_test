@@ -7,6 +7,7 @@ from aiogram.types import FSInputFile, BufferedInputFile, URLInputFile
 from aiogram.enums.dice_emoji import DiceEmoji
 from config_reader import config
 from datetime import datetime
+import os
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.bot_token.get_secret_value(), parse_mode='HTML')
@@ -152,16 +153,23 @@ async def cmd_photo_from_id(message: types.Message):
     except Exception as e:
         print(f'Exception: {str(e)}')
 
+temp_dir = os.path.join(os.path.expanduser("~"), "PycharmProjects/test_bot3/tmp")
 
-@dp.message(F.photo)  # TODO: разберись почему не скачивает файл
+
+@dp.message(F.photo)
 async def download_photo(message: types.Message, bot: Bot):
     await bot.download(
         message.photo[-1],
-        destination=f"/tmp/{message.photo[-1].file_id}.jpg"
+        destination=os.path.join(temp_dir, f"{message.photo[-1].file_id}.jpg")
     )
 
 
-# @dp.
+@dp.message(F.sticker)
+async def download_sticker(message: types.Message, bot: Bot):
+    await bot.download(
+        message.sticker,
+        destination=os.path.join(temp_dir, f'{message.sticker.file_id}.webp')
+    )
 
 
 async def main():
