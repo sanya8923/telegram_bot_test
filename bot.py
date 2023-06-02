@@ -141,7 +141,10 @@ async def cmd_upload_photo_url(message: types.Message):
     print(file_ids)
 
 
-
+@dp.message(Command('image_from_id'))
+async def cmd_photo_from_id(message: types.Message):
+    image = file_ids[0]
+    await message.reply_photo(image)
 
 
 async def main():
