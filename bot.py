@@ -107,9 +107,11 @@ async def cmd_animation(message: types.Message):
     await message.reply_animation(message.animation.file_id)
 
 
+file_ids = []
+
+
 @dp.message(Command('images'))
 async def cmd_upload_photo_buffer(message: types.Message):
-    file_ids = []
     with open('pic/buffer_emulation.jpg', 'rb') as image_from_buffer:
         result = await message.answer_photo(
             BufferedInputFile(image_from_buffer.read(),
@@ -118,15 +120,21 @@ async def cmd_upload_photo_buffer(message: types.Message):
             caption='Image_from_buffer'
         )
         file_ids.append(result.photo[-1].file_id)
+        print(file_ids)
 
 
 @dp.message(Command('image_file'))
 async def cmd_upload_photo_file(message: types.Message):
-    file_ids = []
     image_from_pc = FSInputFile('pic/image_from_pc.jpg')
     result = await message.answer_photo(image_from_pc,
                                         caption='image_from_pc')
     file_ids.append(result.photo[-1].file_id)
+    print(file_ids)
+
+
+# @dp.message(Command('image_url'))
+# async def cmd_upload_photo_url(message: types.Message):
+#     file_ids = []
 
 
 async def main():
