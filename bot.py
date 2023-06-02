@@ -64,11 +64,11 @@ async def cmd_name(message: types.Message, command: CommandObject):
         await message.answer('Add your name after command /name')
 
 
-@dp.message(F.text)
-async def cmd_echo_with_time(message: types.Message):
-    time_now = datetime.now().strftime('%H:%M')
-    added_text = html.underline(f'Create to {time_now}')
-    await message.answer(f'{message.html_text} \n\n{added_text}', parse_mode='HTML')
+# @dp.message(F.text)
+# async def cmd_echo_with_time(message: types.Message):
+#     time_now = datetime.now().strftime('%H:%M')
+#     added_text = html.underline(f'Create to {time_now}')
+#     await message.answer(f'{message.html_text} \n\n{added_text}', parse_mode='HTML')
 
 
 # @dp.message(F.text)
@@ -76,16 +76,34 @@ async def cmd_echo_with_time(message: types.Message):
 #     await message.answer(f'Hi, {html.bold(html.quote(message.html_text))}', parse_mode='HTML')
 
 
-async def cmd_name2(message: types.Message, command: CommandObject):
-    if command.args:
-        await message.answer(f'Hi, {html.bold(html.quote(command.args))}', parse_mode='HTML')
-    else:
-        await message.answer('Add your name after command /name')
+# async def cmd_name2(message: types.Message, command: CommandObject):
+#     if command.args:
+#         await message.answer(f'Hi, {html.bold(html.quote(command.args))}', parse_mode='HTML')
+#     else:
+#         await message.answer('Add your name after command /name')
+
+
+@dp.message(F.text)
+async def cmd_data(message: types.Message):
+    data = {
+        'url': '<N/A>',
+        'email': '<N/A>',
+        'code': '<N/A>'
+    }
+    entities = message.entities or []
+    for item in entities:
+        if item.type in data.keys():
+            data[item.type] = item.extract_from(message.text)
+    await message.reply('Result search:\n'
+                        f'URL: {html.quote(data["url"])}\n'
+                        f'Email: {html.quote(data["email"])}\n'
+                        f'Password: {html.quote(data["code"])}'
+                        )
 
 
 async def main():
     dp.message.register(cmd_test2, Command('test2'))
-    dp.message.register(cmd_name2, Command('name2'))
+    # dp.message.register(cmd_name2, Command('name2'))
 
     # dp.message.register(add_to_list)
     # dp.message.register(show_list)
