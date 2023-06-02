@@ -101,6 +101,11 @@ async def cmd_data(message: types.Message):
                         )
 
 
+@dp.message(F.animation)
+async def cmd_animation(message: types.Message):
+    await message.reply_animation(message.animation.file_id)
+
+
 async def main():
     dp.message.register(cmd_test2, Command('test2'))
     # dp.message.register(cmd_name2, Command('name2'))
