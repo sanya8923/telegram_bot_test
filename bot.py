@@ -132,9 +132,16 @@ async def cmd_upload_photo_file(message: types.Message):
     print(file_ids)
 
 
-# @dp.message(Command('image_url'))
-# async def cmd_upload_photo_url(message: types.Message):
-#     file_ids = []
+@dp.message(Command('image_url'))
+async def cmd_upload_photo_url(message: types.Message):
+    image_from_url = URLInputFile('https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcT18dksjE01o4uNsN-SrwZSP-Ye2rXFP8hhBkjfj_-n1guajQoxP0zer6iNHLTrx1Bd')
+    result = await message.reply_photo(image_from_url,
+                                       caption='image_from_url')
+    file_ids.append(result.photo[-1].file_id)
+    print(file_ids)
+
+
+
 
 
 async def main():
