@@ -6,7 +6,7 @@ from aiogram.filters.command import Command, CommandObject
 from aiogram.types import FSInputFile, BufferedInputFile, URLInputFile
 from aiogram.enums.dice_emoji import DiceEmoji
 from aiogram.utils.markdown import hide_link
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, KeyboardButton
 from config_reader import config
 from datetime import datetime
 import os
@@ -209,11 +209,18 @@ async def download_sticker(message: types.Message, bot: Bot):
 async def cmd_start_beautiful(message: types.Message):
     kb = [
             [
-                types.KeyboardButton(text='/button_1'),  # кнопки в одном элементе списка
-                types.KeyboardButton(text='Button 2')  # ставят их в один ряд
+                KeyboardButton(text='/keyboard_1_16'),  # кнопки в одном элементе списка
+                KeyboardButton(text='/special_commands'),  # ставят их в один ряд
+                KeyboardButton(text='/my_user_id')
             ]
           ]
-    keyboard = types.ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True, input_field_placeholder='Tra-ta-ta')
+
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True,
+        input_field_placeholder='Tra-ta-ta',
+        one_time_keyboard=True,
+    )
     # resize_keyboard уменьшает клавиатуру
     # input_field_placeholder в окошке куда пишем прописывает Tra-ta-ta
     await message.answer('Choice button', reply_markup=keyboard)
@@ -221,7 +228,7 @@ async def cmd_start_beautiful(message: types.Message):
 
 # KEYBOARD BUILDER
 
-@dp.message(Command('button_1'))
+@dp.message(Command('keyboard_1_16'))
 async def keyboard_builder(message: types.Message):
     builder = ReplyKeyboardBuilder()
     for button in range(1, 17):
@@ -231,6 +238,47 @@ async def keyboard_builder(message: types.Message):
         'Choice number:',
         reply_markup=builder.as_markup(resize_keyboard=True),
     )
+
+
+@dp.message(Command('special_commands'))
+async def special_commands(message: types.Message):
+    builder = ReplyKeyboardBuilder()
+
+    builder.row(
+        types.KeyboardButton(text='Get location', request_location=True),
+        types.KeyboardButton(text='Get contact', request_contact=True)
+    )
+    builder.row(
+        types.KeyboardButton(
+            text='Create quiz',
+            request_poll=types.KeyboardButtonPollType(type='quiz')
+        )
+    )
+    builder.row(
+        types.KeyboardButton(
+            text="Choice Premium User",
+            request_user=types.KeyboardButtonRequestUser(
+                request_id=1,
+                user_is_premium=True
+            )
+        ),
+        types.KeyboardButton(
+            text="Choice Super Chat",
+            request_chat=types.KeyboardButtonRequestChat(
+                request_id=2,
+                chat_is_channel=False,
+                chat_is_forum=True
+            )
+        )
+    )
+    await message.answer('Choice action:',
+                         reply_markup=builder.as_markup(resize_keyboard=True)
+                         )
+
+
+@dp.message(Command('my_user_id'))
+async def get_user_id(message: types.Message):
+    await message.answer(f'message_id: {message.message_id}\nuser_id: {message.from_user.id}')
 
 
 async def main():
