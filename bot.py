@@ -6,6 +6,7 @@ from aiogram.filters.command import Command, CommandObject
 from aiogram.types import FSInputFile, BufferedInputFile, URLInputFile
 from aiogram.enums.dice_emoji import DiceEmoji
 from aiogram.utils.markdown import hide_link
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from config_reader import config
 from datetime import datetime
 import os
@@ -105,8 +106,10 @@ async def cmd_name(message: types.Message, command: CommandObject):
 async def cmd_animation(message: types.Message):
     await message.reply_animation(message.animation.file_id)
 
+# ОТПРАВКА КАРТИНОК
 
 # загрузка картинки и сохранение ее id
+
 file_ids = []
 
 
@@ -120,7 +123,7 @@ async def cmd_upload_photo_buffer(message: types.Message):
                               ),
             caption='Image_from_buffer'
         )
-        file_ids.append(result.photo[-1].file_id)
+        file_ids.append(result.photo[-1].file)
         print(file_ids)
 
 
@@ -157,8 +160,20 @@ async def cmd_photo_from_id(message: types.Message):
         print(f'Exception: {str(e)}')
 
 
-# скачивание файла
+# отправка картинки с текстом
+@dp.message(Command('hidden_link'))
+async def cmd_hidden_link(message: types.Message):
+    await message.answer(
+        f'{hide_link("https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcT18dksjE01o4uNsN-SrwZSP-Ye2rXFP8hhBkjfj_-n1guajQoxP0zer6iNHLTrx1Bd")}'
+        f'Something text'
+        )
+
+
+# СКАЧИВАНИЕ
+
+# директория на MAC
 temp_dir = os.path.join(os.path.expanduser("~"), "PycharmProjects/test_bot3/tmp")
+
 
 # скачивание картинки
 @dp.message(F.photo)
@@ -178,15 +193,6 @@ async def download_sticker(message: types.Message, bot: Bot):
     )
 
 
-# отправка картинки с текстом
-@dp.message(Command('hidden_link'))
-async def cmd_hidden_link(message: types.Message):
-    await message.answer(
-        f'{hide_link("https://t0.gstatic.com/licensed-image?q=tbn:ANd9GcT18dksjE01o4uNsN-SrwZSP-Ye2rXFP8hhBkjfj_-n1guajQoxP0zer6iNHLTrx1Bd")}'
-        f'Something text'
-        )
-
-
 # обычная клавиатура
 # @dp.message(Command('start'))
 # async def cmd_start(message: types.Message):
@@ -203,7 +209,7 @@ async def cmd_hidden_link(message: types.Message):
 async def cmd_start_beautiful(message: types.Message):
     kb = [
             [
-                types.KeyboardButton(text='Button 1'),  # кнопки в одном элементе списка
+                types.KeyboardButton(text='/button_1'),  # кнопки в одном элементе списка
                 types.KeyboardButton(text='Button 2')  # ставят их в один ряд
             ]
           ]
@@ -211,6 +217,20 @@ async def cmd_start_beautiful(message: types.Message):
     # resize_keyboard уменьшает клавиатуру
     # input_field_placeholder в окошке куда пишем прописывает Tra-ta-ta
     await message.answer('Choice button', reply_markup=keyboard)
+
+
+# KEYBOARD BUILDER
+
+@dp.message(Command('button_1'))
+async def keyboard_builder(message: types.Message):
+    builder = ReplyKeyboardBuilder()
+    for button in range(1, 17):
+        builder.add(types.KeyboardButton(text=str(button)))
+    builder.adjust(4)
+    await message.answer(
+        'Choice number:',
+        reply_markup=builder.as_markup(resize_keyboard=True),
+    )
 
 
 async def main():
