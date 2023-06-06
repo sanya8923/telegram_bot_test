@@ -369,9 +369,10 @@ def get_keyboard():
 
 
 async def update_num_text(message: types.Message, new_value: int):
-    await message.edit_text(
-        f'write number: {new_value}',
-        reply_markup=get_keyboard()
+    if suppress(TelegramBadRequest):  # Страховка от MessageNotModified
+        await message.edit_text(
+            f'write number: {new_value}',
+            reply_markup=get_keyboard()
     )
 
 
