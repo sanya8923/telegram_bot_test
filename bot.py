@@ -341,6 +341,13 @@ async def cmd_random(message: types.Message):
 @dp.callback_query(Text('random_value'))
 async def send_random_value(callback: types.CallbackQuery):
     await callback.message.answer(str(randint(1, 10)))
+    # C оконком благодарности
+    # await callback.answer(
+    #     text='Thanks',
+    #     show_alert=True
+    # )
+    # Просто убираем часы в углу кнопки
+    # await callback.answer()
 
 
 async def main():
