@@ -16,6 +16,7 @@ import os
 from contextlib import suppress
 from aiogram.exceptions import TelegramBadRequest
 from typing import Optional
+from magic_filter import F
 
 
 logging.basicConfig(level=logging.INFO)
@@ -404,7 +405,7 @@ async def callback_num(callback: types.CallbackQuery):
     await callback.answer()
 
 
-class NumbersCallbackFactory(CallbackData: prefix='fabnum'):
+class NumbersCallbackFactory(CallbackData, prefix='fabnum'):
     action: str
     value: Optional[int]
 
@@ -427,6 +428,22 @@ def update_num_text_fab(message: types.Message, new_value: int):
             f'Write number: {new_value}',
             reply_markup=get_keyboard_fab()
         )
+
+
+@dp.callback_query(NumbersCallbackFactory.filter())
+async def callback_num_change_fab(
+        callback: types.CallbackQuery,
+        callback_data: NumbersCallbackFactory
+):
+    user_value = user_data.get(callback.from_user.id, 0)
+    if callback_data.action == 'Change':
+        user_data[callback.from_user.id] = user_value + callback_data.value
+        await update_num_text_fab(callback.message, user_value + callback_data.value)
+    else:
+        await callback.message.edit_text(
+            f'Total: {user_value}'
+        )
+    callback.answer()
 
 
 async def main():
