@@ -4,6 +4,7 @@ import logging
 from aiogram import Bot, Dispatcher, types, html, F
 from aiogram.filters import Text
 from aiogram.filters.command import Command, CommandObject
+from aiogram.filters.callback_data import CallbackData
 from aiogram.types import FSInputFile, BufferedInputFile, URLInputFile
 from aiogram.enums.dice_emoji import DiceEmoji
 from aiogram.utils.markdown import hide_link
@@ -14,6 +15,7 @@ from random import randint
 import os
 from contextlib import suppress
 from aiogram.exceptions import TelegramBadRequest
+from typing import Optional
 
 
 logging.basicConfig(level=logging.INFO)
@@ -400,6 +402,25 @@ async def callback_num(callback: types.CallbackQuery):
         await callback.message.edit_text(f'total: {user_value}')
 
     await callback.answer()
+
+
+class NumbersCallbackFactory(CallbackData: prefix='fabnum'):
+    action: str
+    value: Optional[int]
+
+
+def get_keyboard_fab():
+    builder = InlineKeyboardBuilder()
+
+    builder.button(text='-2', callback_data=NumbersCallbackFactory(action='change', value=-2))
+    builder.button(text='-1', callback_data=NumbersCallbackFactory(action='change', value=-1))
+    builder.button(text='1', callback_data=NumbersCallbackFactory(action='change', value=1))
+    builder.button(text='2', callback_data=NumbersCallbackFactory(action='change', value=2))
+    builder.button(text='confirm', callback_data=NumbersCallbackFactory(action='finish'))
+
+    builder.adjust(4)
+    return builder.as_markup()
+
 
 
 async def main():
