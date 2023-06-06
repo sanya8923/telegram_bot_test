@@ -6,7 +6,7 @@ from aiogram.filters.command import Command, CommandObject
 from aiogram.types import FSInputFile, BufferedInputFile, URLInputFile
 from aiogram.enums.dice_emoji import DiceEmoji
 from aiogram.utils.markdown import hide_link
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, KeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, KeyboardButton, InlineKeyboardBuilder
 from config_reader import config
 from datetime import datetime
 import os
@@ -212,6 +212,9 @@ async def cmd_start_beautiful(message: types.Message):
                 KeyboardButton(text='/keyboard_1_16'),  # кнопки в одном элементе списка
                 KeyboardButton(text='/special_commands'),  # ставят их в один ряд
                 KeyboardButton(text='/my_user_id')
+            ],
+            [
+                KeyboardButton(text='/inline_url')
             ]
           ]
 
@@ -279,6 +282,43 @@ async def special_commands(message: types.Message):
 @dp.message(Command('my_user_id'))
 async def get_user_id(message: types.Message):
     await message.answer(f'message_id: {message.message_id}\nuser_id: {message.from_user.id}')
+
+
+# @dp.message(F.user_shared)
+# async def on_user_shared(message: types.Message):
+#         # request = types.KeyboardButtonRequestUser.request_id
+#         # user_id = types.KeyboardButtonRequestUser.
+#     print(
+#         f'Request {message.user_shared.request_id}'
+#         f'User_ID {message.user_shared.user_id}'
+#     )
+
+# inline клавиатура
+@dp.message(Command("inline_url"))
+async def cmd_inline_url(message: types.Message, bot: Bot):
+    builder = InlineKeyboardBuilder()
+    builder.row(types.InlineKeyboardButton(
+        text="GitHub", url="https://github.com")
+    )
+    builder.row(types.InlineKeyboardButton(
+        text="Оф. канал Telegram",
+        url="tg://resolve?domain=telegram")
+    )
+
+    # Чтобы иметь возможность показать ID-кнопку,
+    # У юзера должен быть False флаг has_private_forwards
+    user_id = 5102838218
+    chat_info = await bot.get_chat(user_id)
+    if not chat_info.has_private_forwards:
+        builder.row(types.InlineKeyboardButton(
+            text="Какой-то пользователь",
+            url=f"tg://user?id={user_id}")
+        )
+
+    await message.answer(
+        'Выберите ссылку',
+        reply_markup=builder.as_markup(),
+    )
 
 
 async def main():
