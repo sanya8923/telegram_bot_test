@@ -1,6 +1,5 @@
 aiogram==3.0.0b7
 python-dotenv==0.21.1
-
 pip~=23.1.2
 attrs~=23.1.0
 cryptography~=40.0.2

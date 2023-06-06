@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher, types, html, F
+from aiogram.filters import Text
 from aiogram.filters.command import Command, CommandObject
 from aiogram.types import FSInputFile, BufferedInputFile, URLInputFile
 from aiogram.enums.dice_emoji import DiceEmoji
@@ -9,6 +10,7 @@ from aiogram.utils.markdown import hide_link
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, KeyboardButton, InlineKeyboardBuilder
 from config_reader import config
 from datetime import datetime
+from random import randint
 import os
 
 logging.basicConfig(level=logging.INFO)
@@ -336,6 +338,9 @@ async def cmd_random(message: types.Message):
     )
 
 
+@dp.callback_query(Text('random_value'))
+async def send_random_value(callback: types.CallbackQuery):
+    await callback.message.answer(str(randint(1, 10)))
 
 
 async def main():
