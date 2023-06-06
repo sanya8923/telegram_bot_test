@@ -421,6 +421,12 @@ def get_keyboard_fab():
     builder.adjust(4)
     return builder.as_markup()
 
+def update_num_text_fab(message: types.Message, new_value: int):
+    with suppress(TelegramBadRequest):
+        await message.edit_text(
+            f'Write number: {new_value}',
+            reply_markup=get_keyboard_fab()
+        )
 
 
 async def main():
