@@ -214,7 +214,8 @@ async def cmd_start_beautiful(message: types.Message):
                 KeyboardButton(text='/my_user_id')
             ],
             [
-                KeyboardButton(text='/inline_url')
+                KeyboardButton(text='/inline_url'),
+                KeyboardButton(text='/random')
             ]
           ]
 
@@ -319,6 +320,22 @@ async def cmd_inline_url(message: types.Message, bot: Bot):
         'Выберите ссылку',
         reply_markup=builder.as_markup(),
     )
+
+
+@dp.message(Command('random'))
+async def cmd_random(message: types.Message):
+    builder = InlineKeyboardBuilder()
+    builder.add(types.InlineKeyboardButton(
+        text='Push me',
+        callback_data='random_value'
+        )
+    )
+    await message.answer(
+        'Push button and bot send you random number from 1 to 10',
+        reply_markup=builder.as_markup()
+    )
+
+
 
 
 async def main():
