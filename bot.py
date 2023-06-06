@@ -12,6 +12,9 @@ from config_reader import config
 from datetime import datetime
 from random import randint
 import os
+from contextlib import suppress
+from aiogram.exceptions import TelegramBadRequest
+
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.bot_token.get_secret_value(), parse_mode='HTML')
@@ -348,6 +351,54 @@ async def send_random_value(callback: types.CallbackQuery):
     # )
     # Просто убираем часы в углу кнопки
     # await callback.answer()
+
+
+user_data = {}
+
+
+def get_keyboard():
+    button = [
+        [
+            types.InlineKeyboardButton(text='-1', callback_data='num_decr'),
+            types.InlineKeyboardButton(text='+1', callback_data='num_incr')
+        ],
+        [types.InlineKeyboardButton(text='confirm', callback_data='num_finish')]
+    ]
+    result = types.InlineKeyboardMarkup(inline_keyboard=button)
+    return result
+
+
+async def update_num_text(message: types.Message, new_value: int):
+    await message.edit_text(
+        f'write number: {new_value}',
+        reply_markup=get_keyboard()
+    )
+
+
+@dp.message(Command('number'))
+async def cmd_numbers(message: types.Message):
+    user_data[message.from_user.id] = 0
+    await message.answer(
+        f'Your number: 0',
+        reply_markup=get_keyboard()
+    )
+
+
+@dp.callback_query(Text(startswith='num_'))
+async def callback_num(callback: types.CallbackQuery):
+    user_value = user_data.get(callback.from_user.id, 0)
+    action = callback.data.split('_')[1]
+
+    if action == 'incr':
+        user_data[callback.from_user.id] = user_value+1
+        await update_num_text(callback.message, user_value+1)
+    elif action == 'decr':
+        user_data[callback.from_user.id] = user_value-1
+        await update_num_text(callback.message, user_value-1)
+    elif action == 'finish':
+        await callback.message.edit_text(f'total: {user_value}')
+
+    await callback.answer()
 
 
 async def main():
